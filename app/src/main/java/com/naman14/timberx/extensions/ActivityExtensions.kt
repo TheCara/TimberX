@@ -23,7 +23,8 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.naman14.timberx.R
-
+/*泛型*/
+/*扩展函数:在Activity类肿添加了方法*/
 fun <T : ViewDataBinding> Activity.setDataBindingContentView(@LayoutRes res: Int): T {
     return DataBindingUtil.setContentView(this, res)
 }
