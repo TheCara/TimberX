@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    <!--  android:supportsRtl="true" 是否自右向左显示-->
     <application
         android:name=".TimberXApp"
         android:allowBackup="true"
@@ -15,12 +15,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true">
-
+        <!--车载应用 manifest 入口-->
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
-
-        <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
+        <!--指定应用图标-->
+        <meta-data
+            android:name="com.google.android.gms.car.notification.SmallIcon"
             android:resource="@drawable/icon" />
 
         <activity
@@ -39,7 +40,6 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
@@ -79,7 +79,7 @@
         </activity>
 
         <activity android:name=".ui.activities.ExpandedControlsActivity" />
-        <activity android:name=".ui.activities.SettingsActivity"/>
+        <activity android:name=".ui.activities.SettingsActivity" />
 
         <service
             android:name=".playback.TimberMusicService"

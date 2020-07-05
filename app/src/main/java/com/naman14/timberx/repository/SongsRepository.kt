@@ -30,7 +30,7 @@ import timber.log.Timber
 import java.io.File
 
 interface SongsRepository {
-
+/*加载音乐*/
     fun loadSongs(caller: String?): List<Song>
 
     fun getSongForId(id: Long): Song

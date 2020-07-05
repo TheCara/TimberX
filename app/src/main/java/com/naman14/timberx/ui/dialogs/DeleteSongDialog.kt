@@ -34,12 +34,23 @@ class DeleteSongDialog : DialogFragment() {
         fun onSongDeleted(songId: Long)
     }
 
+    /*inject:依赖注入*/
     private val songsRepository by inject<SongsRepository>()
+
 
     @NonNull
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        /*弹出框*/
+        /*实例化MaterialDialog*/
         return MaterialDialog(activity!!).show {
             title(R.string.delete_song_prompt)
+            /*
+            * 设置弹框后的确定按钮
+            * @param res:标题上显示的字符串资源
+            * @param txt:在按钮上显示的文字字符串
+            * @param click:点击确定按钮后的监视器
+            * */
+
             positiveButton(R.string.delete) {
                 val songs = arguments?.getLongArray(SONGS) ?: return@positiveButton
                 val deleted = songsRepository.deleteTracks(songs)
@@ -47,6 +58,7 @@ class DeleteSongDialog : DialogFragment() {
                 activity.toast(message)
                 (activity as? OnSongDeleted)?.onSongDeleted(songs.single())
             }
+            /*取消按钮*/
             negativeButton(android.R.string.cancel)
             onDismiss {
                 // Make sure the DialogFragment dismisses as well
@@ -54,7 +66,7 @@ class DeleteSongDialog : DialogFragment() {
             }
         }
     }
-
+/*对象声明 ,伴生对象*/
     companion object {
         private const val TAG = "DeleteSongDialog"
 
@@ -64,6 +76,7 @@ class DeleteSongDialog : DialogFragment() {
                 songs = LongArray(0)
             } else {
                 songs = LongArray(1)
+                /*songs[0]:等于song的id*/
                 songs[0] = song.id
             }
             show(activity, songs)

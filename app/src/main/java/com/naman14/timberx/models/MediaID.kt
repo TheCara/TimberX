@@ -16,6 +16,7 @@ package com.naman14.timberx.models
 
 import android.support.v4.media.MediaBrowserCompat
 
+/**/
 class MediaID(var type: String? = null, var mediaId: String? = "NA", var caller: String? = currentCaller) {
     companion object {
         const val CALLER_SELF = "self"
@@ -29,14 +30,20 @@ class MediaID(var type: String? = null, var mediaId: String? = "NA", var caller:
         var currentCaller: String? = MediaID.CALLER_SELF
     }
 
+    /*MediaItem:一个包含单个媒体项目信息的类，用于浏览媒体。*/
     var mediaItem: MediaBrowserCompat.MediaItem? = null
 
+    /*返回字符串,这是整个依赖对象的变量*/
     fun asString(): String {
+        /*组合*/
         return TYPE + type + SEPARATOR + MEDIA_ID + mediaId + SEPARATOR + CALLER + caller
     }
 
+    /*返回依赖对象并重新初始化值*/
     fun fromString(s: String): MediaID {
+        /*根据参数返回当前字符串参数后的字符串*/
         this.type = s.substring(6, s.indexOf(SEPARATOR))
+        /*lastIndexOf()返回指定字符在此字符串中最后一次出现处的索引*/
         this.mediaId = s.substring(s.indexOf(SEPARATOR) + 3 + 10, s.lastIndexOf(SEPARATOR))
         this.caller = s.substring(s.lastIndexOf(SEPARATOR) + 3 + 8, s.length)
         return this

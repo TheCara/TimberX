@@ -1,9 +1,12 @@
 <resources>
 
-    <style name="ParentTheme"/>
-    <style name="ParentTheme.Light" parent="Theme.MaterialComponents.Light.NoActionBar"/>
-    <style name="ParentTheme.Dark" parent="Theme.MaterialComponents.NoActionBar"/>
-    <style name="ParentTheme.Black" parent="Theme.MaterialComponents.NoActionBar"/>
+    <style name="ParentTheme" />
+
+    <style name="ParentTheme.Light" parent="Theme.MaterialComponents.Light.NoActionBar" />
+
+    <style name="ParentTheme.Dark" parent="Theme.MaterialComponents.NoActionBar" />
+
+    <style name="ParentTheme.Black" parent="Theme.MaterialComponents.NoActionBar" />
 
     <!-- Splash theme. -->
     <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
