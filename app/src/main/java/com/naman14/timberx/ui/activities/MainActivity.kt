@@ -62,22 +62,60 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
     private val songsRepository by inject<SongsRepository>()
     private val appThemePref by inject<Pref<AppThemes>>(name = PREF_APP_THEME)
 
+    /*不为空*/
     private var binding: MainActivityBinding? = null
     private var bottomSheetListener: BottomSheetListener? = null
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        /*更改主题*/
         setTheme(appThemePref.get().themeRes)
         super.onCreate(savedInstanceState)
         binding = setDataBindingContentView(R.layout.main_activity)
+        /*访问getSupportActionBar()方法:"?."(安全调用运算符)用来确保不为空(null)*/
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
+        /*是否存储权限*/
         if (!permissionsManager.hasStoragePermission()) {
             permissionsManager.requestStoragePermission()
             return
         }
 
         setupUI()
+    }
+
+    private fun setupUI() {
+        /*observe()方法第一个参数是作为LifecycleOwner实例的Fragment。 这样做表示此Observer绑定了Lifecycle对象的生命周期。使用observe()方法将Observer对象注册到LiveData对象*/
+        /*第二个参数:用作观察者模式*/
+        viewModel.rootMediaId.observe(this) {
+            replaceFragment(fragment = MainFragment())
+
+            Handler().postDelayed({
+                replaceFragment(
+                        R.id.bottomControlsContainer,
+                        BottomControlsFragment()
+                )
+            }, 150)
+
+            //handle playback intents, (search intent or ACTION_VIEW intent)
+            handlePlaybackIntent(intent)
+        }
+
+        viewModel.navigateToMediaItem
+                .map { it.getContentIfNotHandled() }
+                .filter { it != null }
+                .observe(this) { navigateToMediaItem(it!!) }
+
+        binding?.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
+        }
+        val parentThatHasBottomSheetBehavior = bottom_sheet_parent as FrameLayout
+
+        bottomSheetBehavior = BottomSheetBehavior.from(parentThatHasBottomSheetBehavior)
+        bottomSheetBehavior?.isHideable = true
+        bottomSheetBehavior?.setBottomSheetCallback(BottomSheetCallback())
+
+        dimOverlay.setOnClickListener { collapseBottomSheet() }
     }
 
     fun setBottomSheetListener(bottomSheetListener: BottomSheetListener) {
@@ -126,37 +164,6 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
         viewModel.onSongDeleted(songId)
     }
 
-    private fun setupUI() {
-        viewModel.rootMediaId.observe(this) {
-            replaceFragment(fragment = MainFragment())
-            Handler().postDelayed({
-                replaceFragment(
-                        R.id.bottomControlsContainer,
-                        BottomControlsFragment()
-                )
-            }, 150)
-
-            //handle playback intents, (search intent or ACTION_VIEW intent)
-            handlePlaybackIntent(intent)
-        }
-
-        viewModel.navigateToMediaItem
-                .map { it.getContentIfNotHandled() }
-                .filter { it != null }
-                .observe(this) { navigateToMediaItem(it!!) }
-
-        binding?.let {
-            it.viewModel = viewModel
-            it.lifecycleOwner = this
-        }
-        val parentThatHasBottomSheetBehavior = bottom_sheet_parent as FrameLayout
-
-        bottomSheetBehavior = BottomSheetBehavior.from(parentThatHasBottomSheetBehavior)
-        bottomSheetBehavior?.isHideable = true
-        bottomSheetBehavior?.setBottomSheetCallback(BottomSheetCallback())
-
-        dimOverlay.setOnClickListener { collapseBottomSheet() }
-    }
 
     private fun navigateToMediaItem(mediaId: MediaID) {
         if (getBrowseFragment(mediaId) == null) {

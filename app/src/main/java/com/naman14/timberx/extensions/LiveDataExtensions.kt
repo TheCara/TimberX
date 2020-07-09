@@ -19,7 +19,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
-
+/*扩展函数*/
+/*参数onEmission:接受一个泛型类型*/
 fun <T> LiveData<T>.observe(owner: LifecycleOwner, onEmission: (T) -> Unit) {
     return observe(owner, Observer<T> {
         if (it != null) {

@@ -25,7 +25,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.naman14.timberx.R
 /*泛型*/
 /*扩展函数:在Activity类肿添加了方法*/
-/*测试*/
+/*<T : ViewDataBinding> 类型参数约束*/
 fun <T : ViewDataBinding> Activity.setDataBindingContentView(@LayoutRes res: Int): T {
     return DataBindingUtil.setContentView(this, res)
 }
@@ -47,7 +47,7 @@ fun Activity?.addFragment(
                 commit()
             }
 }
-
+/*在Activity下添加扩展函数(?."为安全安全调用运算符,确保函数不会出现空指针异常")*/
 fun Activity?.replaceFragment(
     @IdRes id: Int = R.id.container,
     fragment: Fragment,
