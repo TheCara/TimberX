@@ -99,16 +99,19 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
             //handle playback intents, (search intent or ACTION_VIEW intent)
             handlePlaybackIntent(intent)
         }
-
+        /*使用 LiveData<Event<MediaID>>的*/
+        /*map():将list种的元素按照参数转换成新的元素，并且将List返回*/
+        /*filter():根据参数过滤掉返回一个新的List*/
         viewModel.navigateToMediaItem
                 .map { it.getContentIfNotHandled() }
                 .filter { it != null }
                 .observe(this) { navigateToMediaItem(it!!) }
-
+        /*"?."安全调用运算符*/
         binding?.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
         }
+        /*"as":as运算符用于执行引用类型的显式类型转换。如果要转换的类型与指定的类型兼容，转换就会成功进行；如果类型不兼容，使用as?运算符就会返回值null。在Kotlin中，父类是禁止转换为子类型的。*/
         val parentThatHasBottomSheetBehavior = bottom_sheet_parent as FrameLayout
 
         bottomSheetBehavior = BottomSheetBehavior.from(parentThatHasBottomSheetBehavior)
