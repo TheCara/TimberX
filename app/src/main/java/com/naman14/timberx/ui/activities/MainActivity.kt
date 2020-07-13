@@ -62,19 +62,22 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
     private val songsRepository by inject<SongsRepository>()
     private val appThemePref by inject<Pref<AppThemes>>(name = PREF_APP_THEME)
 
-    /*不为空*/
+    //    不为空
+    //    MainActivityBinding类(DataBinding库会为每个布局文件生成一个binding类)为DataBinging绑定类
     private var binding: MainActivityBinding? = null
     private var bottomSheetListener: BottomSheetListener? = null
+
+    //    初始化BottomSheetBehavior<View>泛型为<View>
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        /*更改主题*/
+        //更改主题,使用setTheme()方法要在onCreate()方法之前,表示设置基础主题上下文,被称为视图实例化之前的上下文
         setTheme(appThemePref.get().themeRes)
         super.onCreate(savedInstanceState)
         binding = setDataBindingContentView(R.layout.main_activity)
-        /*访问getSupportActionBar()方法:"?."(安全调用运算符)用来确保不为空(null)*/
+        //访问setSupportActionBar()方法:"?."(安全调用运算符)用来确保不为空(null)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        /*是否存储权限*/
+        //是否存储权限
         if (!permissionsManager.hasStoragePermission()) {
             permissionsManager.requestStoragePermission()
             return
@@ -83,9 +86,11 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
         setupUI()
     }
 
+    /**/
     private fun setupUI() {
-        /*observe()方法第一个参数是作为LifecycleOwner实例的Fragment。 这样做表示此Observer绑定了Lifecycle对象的生命周期。使用observe()方法将Observer对象注册到LiveData对象*/
-        /*第二个参数:用作观察者模式*/
+        //observe()方法第一个参数是作为LifecycleOwner实例的Fragment。
+        // 这样做表示此Observer绑定了Lifecycle对象的生命周期。使用observe()方法将Observer对象注册到LiveData对象
+        //第二个参数:用作观察者模式
         viewModel.rootMediaId.observe(this) {
             replaceFragment(fragment = MainFragment())
 
@@ -99,9 +104,9 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
             //handle playback intents, (search intent or ACTION_VIEW intent)
             handlePlaybackIntent(intent)
         }
-        /*使用 LiveData<Event<MediaID>>的*/
-        /*map():将list种的元素按照参数转换成新的元素，并且将List返回*/
-        /*filter():根据参数过滤掉返回一个新的List*/
+        //使用 LiveData<Event<MediaID>>的
+        //map():将list种的元素按照参数转换成新的元素，并且将List返回
+        //filter():根据参数过滤掉返回一个新的List
         viewModel.navigateToMediaItem
                 .map { it.getContentIfNotHandled() }
                 .filter { it != null }
@@ -111,7 +116,9 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
             it.viewModel = viewModel
             it.lifecycleOwner = this
         }
-        /*"as":as运算符用于执行引用类型的显式类型转换。如果要转换的类型与指定的类型兼容，转换就会成功进行；如果类型不兼容，使用as?运算符就会返回值null。在Kotlin中，父类是禁止转换为子类型的。*/
+        //"as":as运算符用于执行引用类型的显式类型转换。
+        // 如果要转换的类型与指定的类型兼容，转换就会成功进行；如果类型不兼容，使用as?运算符就会返回值null。
+        // 在Kotlin中，父类是禁止转换为子类型的。
         val parentThatHasBottomSheetBehavior = bottom_sheet_parent as FrameLayout
 
         bottomSheetBehavior = BottomSheetBehavior.from(parentThatHasBottomSheetBehavior)
