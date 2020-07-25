@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore.EXTRA_MEDIA_TITLE
 import android.provider.MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.NonNull
@@ -55,7 +56,9 @@ import kotlinx.android.synthetic.main.main_activity.bottom_sheet_parent
 import kotlinx.android.synthetic.main.main_activity.dimOverlay
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
+/*
+*
+* */
 class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
 
     private val viewModel by viewModel<MainViewModel>()
@@ -75,7 +78,7 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
         setTheme(appThemePref.get().themeRes)
         super.onCreate(savedInstanceState)
         binding = setDataBindingContentView(R.layout.main_activity)
-        //访问setSupportActionBar()方法:"?."(安全调用运算符)用来确保不为空(null)
+        // 访问setSupportActionBar()方法:"?."(安全调用运算符)用来确保不为空(null) 设置Toolbar时候显示
         supportActionBar?.setDisplayShowTitleEnabled(false)
         //是否存储权限
         if (!permissionsManager.hasStoragePermission()) {
@@ -88,8 +91,9 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
 
     /**/
     private fun setupUI() {
+        //延迟跳转到一个碎片
         //observe()方法第一个参数是作为LifecycleOwner实例的Fragment。
-        // 这样做表示此Observer绑定了Lifecycle对象的生命周期。使用observe()方法将Observer对象注册到LiveData对象
+        //这样做表示此Observer绑定了Lifecycle对象的生命周期。使用observe()方法将Observer对象注册到LiveData对象
         //第二个参数:用作观察者模式
         viewModel.rootMediaId.observe(this) {
             replaceFragment(fragment = MainFragment())
@@ -98,6 +102,7 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
                 replaceFragment(
                         R.id.bottomControlsContainer,
                         BottomControlsFragment()
+
                 )
             }, 150)
 

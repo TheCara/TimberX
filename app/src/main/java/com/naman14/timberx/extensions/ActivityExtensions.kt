@@ -25,7 +25,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.naman14.timberx.R
 /*泛型*/
 /*扩展函数:在Activity类中添加了方法*/
-/*<T : ViewDataBinding> 类型参数约束*/
+/*<T : ViewDataBinding> 类型参数约束 扩展函数实现DataBinding绑定的方法*/
 fun <T : ViewDataBinding> Activity.setDataBindingContentView(@LayoutRes res: Int): T {
 
     return DataBindingUtil.setContentView(this, res)
@@ -48,20 +48,30 @@ fun Activity?.addFragment(
                 commit()
             }
 }
-/*在Activity下添加扩展函数(?."为安全安全调用运算符,确保函数不会出现空指针异常")*/
+/*
+* 在Activity下添加扩展函数(?."为安全安全调用运算符,确保函数不会出现空指针异常")
+* 需要动态添加一个碎片到 R.id.container
+* */
 fun Activity?.replaceFragment(
     @IdRes id: Int = R.id.container,
     fragment: Fragment,
     tag: String? = null,
     addToBackStack: Boolean = false
 ) {
+    // "as?" 安全转换符 当左侧可以转换成右侧类型时,返回本身.不可以时返回null
+    // "?:" Elvis 转换符 当左侧不为空时方法本视,为空时反会右侧方法
     val compatActivity = this as? AppCompatActivity ?: return
+    // "apply" 对同一个对象进行多次返回用 "this"代替当前对象。完成后返回调用对象。
     compatActivity.supportFragmentManager.beginTransaction()
             .apply {
+                // 需要replace()方法 向容器中添加碎片
                 replace(id, fragment, tag)
+                // 需要 addToBackStack()方法 将此事务添加到后台堆栈。意味着该事务被提交后会被记住，退回操作后,事务会从堆栈中弹回。
+                // 需要 addToBackStack() 方法 为null时会被放入到堆栈中。
                 if (addToBackStack) {
                     addToBackStack(null)
                 }
+                // 需要 commit()方法 执行容器
                 commit()
             }
 }
