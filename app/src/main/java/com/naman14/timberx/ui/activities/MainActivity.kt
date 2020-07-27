@@ -110,13 +110,14 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
             handlePlaybackIntent(intent)
         }
         //使用 LiveData<Event<MediaID>>的
-        //map():将list种的元素按照参数转换成新的元素，并且将List返回
+        //map():将list中的元素按照参数转换成新的元素，并且将List返回
         //filter():根据参数过滤掉返回一个新的List
         viewModel.navigateToMediaItem
                 .map { it.getContentIfNotHandled() }
                 .filter { it != null }
                 .observe(this) { navigateToMediaItem(it!!) }
-        /*"?."安全调用运算符*/
+        // "?."安全调用运算符
+        // 需要 初始化ViewModel 和 setLifeCyclerOwner
         binding?.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
@@ -128,18 +129,57 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
 
         bottomSheetBehavior = BottomSheetBehavior.from(parentThatHasBottomSheetBehavior)
         bottomSheetBehavior?.isHideable = true
+        // 需要 设置监听在联动的控件中拖动、滑动、切换时发生改变
         bottomSheetBehavior?.setBottomSheetCallback(BottomSheetCallback())
 
         dimOverlay.setOnClickListener { collapseBottomSheet() }
+    }
+    private fun handlePlaybackIntent(intent: Intent?) {
+        if (intent == null || intent.action == null) return
+        // "!!" 非空断言 当左侧值不为空时返回本身,为空时返回NullPointer
+        when (intent.action!!) {
+            INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH -> {
+                val songTitle = intent.extras?.getString(EXTRA_MEDIA_TITLE, null)
+                viewModel.transportControls().playFromSearch(songTitle, null)
+            }
+            ACTION_VIEW -> {
+                val path = getIntent().data?.path ?: return
+                val song = songsRepository.getSongFromPath(path)
+                viewModel.mediaItemClicked(song, null)
+            }
+        }
+    }
+
+    private inner class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(@NonNull bottomSheet: View, newState: Int) {
+            if (newState == STATE_DRAGGING || newState == STATE_EXPANDED) {
+                dimOverlay.show()
+            } else if (newState == STATE_COLLAPSED) {
+                dimOverlay.hide()
+            }
+            bottomSheetListener?.onStateChanged(bottomSheet, newState)
+        }
+        // 需要 onSlide() 拖拽中的回调
+        // 需要 slideOffset为0-1 完全收起为0 完全展开为1
+        override fun onSlide(@NonNull bottomSheet: View, slideOffset: Float) {
+            if (slideOffset > 0) {
+                // 需要 修改 "alpha" 设置透明度 setAlpha（0）时view和子view就会消失.
+                dimOverlay.alpha = slideOffset
+            } else if (slideOffset == 0f) {
+                dimOverlay.hide()
+            }
+            bottomSheetListener?.onSlide(bottomSheet, slideOffset)
+        }
+    }
+
+    fun collapseBottomSheet() {
+        bottomSheetBehavior?.state = STATE_COLLAPSED
     }
 
     fun setBottomSheetListener(bottomSheetListener: BottomSheetListener) {
         this.bottomSheetListener = bottomSheetListener
     }
 
-    fun collapseBottomSheet() {
-        bottomSheetBehavior?.state = STATE_COLLAPSED
-    }
 
     fun hideBottomSheet() {
         bottomSheetBehavior?.state = STATE_HIDDEN
@@ -191,41 +231,9 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
         }
     }
 
-    private fun handlePlaybackIntent(intent: Intent?) {
-        if (intent == null || intent.action == null) return
 
-        when (intent.action!!) {
-            INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH -> {
-                val songTitle = intent.extras?.getString(EXTRA_MEDIA_TITLE, null)
-                viewModel.transportControls().playFromSearch(songTitle, null)
-            }
-            ACTION_VIEW -> {
-                val path = getIntent().data?.path ?: return
-                val song = songsRepository.getSongFromPath(path)
-                viewModel.mediaItemClicked(song, null)
-            }
-        }
-    }
 
-    private inner class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onStateChanged(@NonNull bottomSheet: View, newState: Int) {
-            if (newState == STATE_DRAGGING || newState == STATE_EXPANDED) {
-                dimOverlay.show()
-            } else if (newState == STATE_COLLAPSED) {
-                dimOverlay.hide()
-            }
-            bottomSheetListener?.onStateChanged(bottomSheet, newState)
-        }
 
-        override fun onSlide(@NonNull bottomSheet: View, slideOffset: Float) {
-            if (slideOffset > 0) {
-                dimOverlay.alpha = slideOffset
-            } else if (slideOffset == 0f) {
-                dimOverlay.hide()
-            }
-            bottomSheetListener?.onSlide(bottomSheet, slideOffset)
-        }
-    }
 
     private fun isRootId(mediaId: MediaID) = mediaId.type == viewModel.rootMediaId.value?.type
 
