@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 apply from: '../dependencies.gradle'
 
 android {
-    compileSdkVersion versions.targetSdk
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.naman14.timberx"
         minSdkVersion versions.minSdk

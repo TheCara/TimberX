@@ -56,6 +56,7 @@ import kotlinx.android.synthetic.main.main_activity.bottom_sheet_parent
 import kotlinx.android.synthetic.main.main_activity.dimOverlay
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 /*
 *
 * */
@@ -65,7 +66,6 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
     private val songsRepository by inject<SongsRepository>()
     private val appThemePref by inject<Pref<AppThemes>>(name = PREF_APP_THEME)
 
-    //    不为空
     //    MainActivityBinding类(DataBinding库会为每个布局文件生成一个binding类)为DataBinging绑定类
     private var binding: MainActivityBinding? = null
     private var bottomSheetListener: BottomSheetListener? = null
@@ -104,7 +104,7 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
                         BottomControlsFragment()
 
                 )
-            }, 150)
+            }, 1)
 
             //handle playback intents, (search intent or ACTION_VIEW intent)
             handlePlaybackIntent(intent)
@@ -134,6 +134,7 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
 
         dimOverlay.setOnClickListener { collapseBottomSheet() }
     }
+
     private fun handlePlaybackIntent(intent: Intent?) {
         if (intent == null || intent.action == null) return
         // "!!" 非空断言 当左侧值不为空时返回本身,为空时返回NullPointer
@@ -159,6 +160,7 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
             }
             bottomSheetListener?.onStateChanged(bottomSheet, newState)
         }
+
         // 需要 onSlide() 拖拽中的回调
         // 需要 slideOffset为0-1 完全收起为0 完全展开为1
         override fun onSlide(@NonNull bottomSheet: View, slideOffset: Float) {
@@ -230,9 +232,6 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
             )
         }
     }
-
-
-
 
 
     private fun isRootId(mediaId: MediaID) = mediaId.type == viewModel.rootMediaId.value?.type
