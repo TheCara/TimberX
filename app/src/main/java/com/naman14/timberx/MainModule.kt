@@ -26,17 +26,23 @@ import org.koin.dsl.module.module
 const val MAIN = "main"
 
 val mainModule = module {
-
+    // 设置匹配类型
+    // 绑定一个接口 ContentResolver
     factory<ContentResolver> {
+        //指定类型
+        // 得到Cursor类型
         get<Application>().contentResolver
     }
-
+    // bind：为给定的对象声明添加要绑定的类型
+    // ComponentName： 用于开启一个服务
     single {
         val component = ComponentName(get(), TimberMusicService::class.java)
+        // 自定义类型
         RealMediaSessionConnection(get(), component)
     } bind MediaSessionConnection::class
-
+    // name: String - for a Koin factory or single bean definition
     factory(name = MAIN) {
+        // 主线程
         AndroidSchedulers.mainThread()
     }
 }

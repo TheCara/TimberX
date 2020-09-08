@@ -48,6 +48,7 @@ val prefsModule = module {
                 AlbumSortOrder.Companion::fromString, AlbumSortOrder.Companion::toString)
     }
 
+    //定义工厂
     factory(name = PREF_APP_THEME) {
         get<RxkPrefs>().enum(PREF_APP_THEME, LIGHT,
                 AppThemes.Companion::fromString, AppThemes.Companion::toString)

@@ -75,10 +75,13 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //更改主题,使用setTheme()方法要在onCreate()方法之前,表示设置基础主题上下文,被称为视图实例化之前的上下文
+        // get()获得当前首选项
         setTheme(appThemePref.get().themeRes)
         super.onCreate(savedInstanceState)
         binding = setDataBindingContentView(R.layout.main_activity)
-        // 访问setSupportActionBar()方法:"?."(安全调用运算符)用来确保不为空(null) 设置Toolbar时候显示
+        // 设置Toolbar时候显示
+        // 访问setSupportActionBar()方法:"?."(安全调用运算符)用来确保不为空(null)
+        // setDisplayShowTitleEnabled() 控制 ToolBar 是否展示
         supportActionBar?.setDisplayShowTitleEnabled(false)
         //是否存储权限
         if (!permissionsManager.hasStoragePermission()) {
@@ -89,7 +92,7 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
         setupUI()
     }
 
-    /**/
+
     private fun setupUI() {
         //延迟跳转到一个碎片
         //observe()方法第一个参数是作为LifecycleOwner实例的Fragment。
@@ -97,7 +100,7 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
         //第二个参数:用作观察者模式
         viewModel.rootMediaId.observe(this) {
             replaceFragment(fragment = MainFragment())
-
+            // postDelayed() 延迟发送通知
             Handler().postDelayed({
                 replaceFragment(
                         R.id.bottomControlsContainer,
@@ -138,8 +141,10 @@ class MainActivity : PermissionsActivity(), DeleteSongDialog.OnSongDeleted {
     private fun handlePlaybackIntent(intent: Intent?) {
         if (intent == null || intent.action == null) return
         // "!!" 非空断言 当左侧值不为空时返回本身,为空时返回NullPointer
+        // getAction() 手指的动作
         when (intent.action!!) {
             INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH -> {
+                // EXTRA_MEDIA_TITLE: 歌曲的名字
                 val songTitle = intent.extras?.getString(EXTRA_MEDIA_TITLE, null)
                 viewModel.transportControls().playFromSearch(songTitle, null)
             }

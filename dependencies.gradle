@@ -6,7 +6,7 @@ ext.versions = [
         versionName       : "1.5",
 
         // Plugins
-        gradlePlugin      : "3.3.1",
+        gradlePlugin      : '4.0.0',
         googleServices    : "4.2.0",
         fabric            : "1.27.0",
         spotlessPlugin    : "3.17.0",

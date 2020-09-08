@@ -17,10 +17,12 @@ package com.naman14.timberx.constants
 import com.naman14.timberx.R
 
 enum class AppThemes(val rawValue: String, val themeRes: Int) {
+    // 属性
     LIGHT("light", R.style.AppTheme_Light),
     DARK("dark", R.style.AppTheme_Dark),
     BLACK("black", R.style.AppTheme_Black);
 
+    // 伴生对象
     companion object {
         fun fromString(raw: String): AppThemes {
             return AppThemes.values().single { it.rawValue == raw }
