@@ -1,3 +1,4 @@
+// 键值对集合的额外属性 ext
 ext.versions = [
         // App
         minSdk            : 21,

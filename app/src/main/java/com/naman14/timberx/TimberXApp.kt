@@ -37,6 +37,8 @@ class TimberXApp : Application() {
         super.onCreate()
 
         if (DEBUG) {
+            /*Timeber的使用主要通过添加Tree实例，添加Tree实例可以通过方法Timber.plant完成。*/
+            /*DebugTree,自动实例化*/
             Timber.plant(Timber.DebugTree())
         } else {
             Timber.plant(FabricTree())

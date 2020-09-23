@@ -29,7 +29,7 @@ val mainModule = module {
     // 设置匹配类型
     // 绑定一个接口 ContentResolver
     factory<ContentResolver> {
-        //指定类型
+        // 指定类型
         // 得到Cursor类型
         get<Application>().contentResolver
     }

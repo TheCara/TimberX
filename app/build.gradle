@@ -1,32 +1,41 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+// 在 Kotlin 中则需要添加 kotlin-kapt 插件激活 kapt，并使用 kapt 替换 annotationProcessor： kapt 也能够处理 Java 文件，所以不需要再保留 annotationProcessor 的依赖。 在 Kotlin 中通过 kapt 编译器插件支持注解处理器。需要学习 注解
 apply plugin: 'kotlin-kapt'
-
+// 复制原文件 复制文件
 apply from: '../dependencies.gradle'
-
+// 这个闭包主要为了配置项目构建的各种属性
 android {
+    // 设置编译时用的Android版本
     compileSdkVersion 28
+    // defaultConfig{}闭包
     defaultConfig {
-        applicationId "com.naman14.timberx"
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
-        versionCode versions.versionCode
-        versionName versions.versionName
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        applicationId "com.naman14.timberx" //项目的包名
+        minSdkVersion versions.minSdk //项目最低兼容的版本
+        targetSdkVersion versions.targetSdk //项目的目标版本
+        versionCode versions.versionCode //版本号
+        versionName versions.versionName //版本名称
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner" //表明要使用AndroidJUnitRunner进行单元测试
     }
     buildTypes {
+        // 用于指定生成正式版安装文件的配置
         release {
+            //是否对代码进行混淆
             minifyEnabled false
+            //指定混淆的规则文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    //使用dataBinding
     dataBinding {
         enabled = true
     }
     androidExtensions {
         experimental = true
     }
+    // 代码扫描分析
+    // 协助我们发现项目中代码质量问题
     lintOptions {
         disable 'MissingTranslation'
     }
